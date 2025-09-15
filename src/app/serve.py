@@ -1,0 +1,1 @@
+"""Placeholder for Streamlit app / FastAPI endpoint (Phase 5)."""

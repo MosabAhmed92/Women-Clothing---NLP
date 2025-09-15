@@ -1,0 +1,35 @@
+# Raw + processed data
+data/raw/
+data/processed/
+
+# Reports & figures
+reports/
+figs/
+
+# Models & artifacts
+models/
+artifacts/
+*.pkl
+*.joblib
+*.model
+*.h5
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual envs
+.env
+.venv/
+env/
+venv/
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+# macOS
+.DS_Store
+
+# Secrets
+*.env
+secrets.*

@@ -1,0 +1,27 @@
+name: wcr-nlp
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - jupyterlab
+  - ipykernel
+  - nltk
+  - spacy
+  - imbalanced-learn
+  - pip:
+      - xgboost
+      - transformers
+      - datasets
+      - evaluate
+      - accelerate
+      - sentencepiece
+      - torch
+      - torchvision
+      - torchaudio

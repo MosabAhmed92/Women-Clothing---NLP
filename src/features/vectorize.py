@@ -1,0 +1,1 @@
+"""Vectorizer factory for BoW/TF-IDF; exposes fit/transform stubs."""
