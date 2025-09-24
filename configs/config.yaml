@@ -5,9 +5,10 @@ data:
   raw_path: data/raw/womens_clothing_ecommerce_reviews_balanced.csv
   processed_dir: data/processed
   text_column: review_body
-  sentiment_label: SENTIMENT # pos|neu|neg (Phase 1)
+  sentiment_label: SENTIMENT 
   rating_label: RATING      
   recommend_label: RECOMMEND 
+  test: HRRRY
 
 preprocessing:
   lowercase: true
@@ -18,7 +19,7 @@ preprocessing:
   stopwords: english
 
 vectorization:
-  type: tfidf  # options: bow|tfidf
+  type: tfidf  #  bow|tfidf
   ngram_range: [1, 2]
   max_features: 20000
   min_df: 2
