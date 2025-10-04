@@ -7,7 +7,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 def build_vectorizer(cfg):
     vectorizer_type = cfg['vectorization']['type']
     ngram_range = tuple(cfg['vectorization']['ngram_range'])  
-    print('Vectorizer type from config: ', repr(vectorizer_type))
+    print('Vectorizer type from config is: ', repr(vectorizer_type))
 
 
     if vectorizer_type == 'tfidf':

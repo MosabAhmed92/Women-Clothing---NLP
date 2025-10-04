@@ -4,7 +4,6 @@ import os
 def load_split(dataset, cfg):
     if dataset not in {'train', 'val', 'test'}:
         raise ValueError(f"Invalid split name: {dataset}")
-    print ('im here')
     
     path = os.path.join('..', cfg['data']['processed_dir'], f"{dataset}.csv")
     df = pd.read_csv(path)
