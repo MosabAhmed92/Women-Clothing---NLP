@@ -23,6 +23,18 @@ def confusion(y_true, y_pred):
     return confusion_matrix (y_true, y_pred, labels= [1, 0, -1])  # confusion matrix
 
 
+def eval_model(y_true, y_pred, model_name):
+        
+        metrics = {
+        "model": model_name,
+        "acc_val": accuracy(y_true, y_pred),
+        "macro_f1": macro_f1(y_true, y_pred),
+        "confusion": confusion(y_true, y_pred),
+        "per_class_f1_val": per_class_f1(y_true, y_pred)
+        }
+        return metrics
+
+
 
 def evaluate_model(model, X_tr, y_tr, X_va, y_va, model_name):
     model.fit(X_tr, y_tr)
@@ -36,6 +48,6 @@ def evaluate_model(model, X_tr, y_tr, X_va, y_va, model_name):
         "acc_train": accuracy(y_tr, ypred_tr),
         "macro_f1_train": macro_f1(y_tr, ypred_tr),
         "confusion_val": confusion(y_va, ypred_va),
-        # optional: "per_class_f1_val": per_class_f1(y_va, yhat_va)
+        "per_class_f1_val": per_class_f1(y_va, ypred_va)
     }
     return metrics

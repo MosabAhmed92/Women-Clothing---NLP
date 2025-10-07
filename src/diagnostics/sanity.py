@@ -44,7 +44,7 @@ def vectorizer_summary(vec):
         params["norm"]         = getattr(vec, "norm", None)
 
     for k, v in params.items():
-        print(f"\n{k:>14}:  ======> s{v}")
+        print(f"\n{k:>14}:  ======> {v}")
 
     # Vocabulary
     feature_names = vec.get_feature_names_out()
