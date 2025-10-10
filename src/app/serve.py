@@ -1,14 +1,14 @@
 import streamlit as st 
 import sys
 import os
-from src.models.persist import load_model
 
 PROJ_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 if PROJ_ROOT not in sys.path:
     sys.path.insert(0, PROJ_ROOT)
 
-    
+from src.models.persist import load_model
+
 ART_DIR   = os.path.join(PROJ_ROOT, "artifacts")
 
 # decorate the function so that it runs once per process 
