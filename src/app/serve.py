@@ -1,20 +1,20 @@
 import sys
 import os
 
-PROJ_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-
-
-import streamlit as st 
-
+FILE_DIR  = os.path.dirname(os.path.abspath(__file__))          # .../src/app
+PROJ_ROOT = os.path.abspath(os.path.join(FILE_DIR, "..", "..")) # .../ (repo root)
 if PROJ_ROOT not in sys.path:
     sys.path.insert(0, PROJ_ROOT)
 
-from src.models.persist import load_model
 
 ART_DIR   = os.path.join(PROJ_ROOT, "artifacts")
 
-# decorate the function so that it runs once per process 
+from src.models.persist import load_model
 
+
+
+import streamlit as st
+# decorate the function so that it runs once per process 
 
 @st.cache_resource
 def get_model():
