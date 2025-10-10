@@ -1,8 +1,10 @@
-import streamlit as st 
 import sys
 import os
 
 PROJ_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+
+import streamlit as st 
 
 if PROJ_ROOT not in sys.path:
     sys.path.insert(0, PROJ_ROOT)
