@@ -10,9 +10,12 @@ SRC_DIR   = os.path.join(PROJ_ROOT, "src")
 # Change the current working directory to the project root
 os.chdir(PROJ_ROOT)
 
-for p in (PROJ_ROOT, SRC_DIR):
+for p in (PROJ_ROOT,):
     if p not in sys.path:
         sys.path.insert(0, p)
+
+print(f"Current working directory: {os.getcwd()}")
+print(f"sys.path: {sys.path}")
 
 ART_DIR = os.path.join(PROJ_ROOT, "artifacts")
 # ------------------------------------------------------------------------------------
