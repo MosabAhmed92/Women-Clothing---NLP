@@ -7,20 +7,10 @@ FILE_DIR  = os.path.dirname(os.path.abspath(__file__))          # .../src/app
 PROJ_ROOT = os.path.abspath(os.path.join(FILE_DIR, "..", "..")) # repo root
 SRC_DIR   = os.path.join(PROJ_ROOT, "src")
 
-# Change the current working directory to the project root
-os.chdir(PROJ_ROOT)
-
-for p in (PROJ_ROOT,):
-    if p not in sys.path:
-        sys.path.insert(0, p)
-
-print(f"Current working directory: {os.getcwd()}")
-print(f"sys.path: {sys.path}")
-
 ART_DIR = os.path.join(PROJ_ROOT, "artifacts")
 # ------------------------------------------------------------------------------------
 
-from src.models.persist import load_model  
+from src.models.persist import load_model
 
 @st.cache_resource
 def get_model():
