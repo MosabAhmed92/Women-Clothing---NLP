@@ -7,7 +7,6 @@ reports/
 figs/
 
 # Models & artifacts
-models/
 artifacts/
 *.pkl
 *.joblib
