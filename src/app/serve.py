@@ -1,39 +1,64 @@
-import sys
-import os
-import streamlit as st  # <-- streamlit import is fine anywhere
+import os, sys
+import streamlit as st
 
-# ---------- add repo root and src/ to sys.path BEFORE importing from src.* ----------
+# ---------- Resolve project paths ----------
 FILE_DIR  = os.path.dirname(os.path.abspath(__file__))          # .../src/app
 PROJ_ROOT = os.path.abspath(os.path.join(FILE_DIR, "..", "..")) # repo root
+ART_DIR   = os.path.join(PROJ_ROOT, "artifacts")
 
-if FILE_DIR in sys.path:
-    sys.path.remove(FILE_DIR)
-
+# Make repo importable (safe to add even if already present)
 if PROJ_ROOT not in sys.path:
     sys.path.insert(0, PROJ_ROOT)
 
-ART_DIR = os.path.join(PROJ_ROOT, "artifacts")
-# ------------------------------------------------------------------------------------
-
-from src.models.persist import load_model
+# ---------- Load model (cached) ----------
+import joblib
 
 @st.cache_resource
-def get_model():
-    return load_model(ART_DIR, "final_sentiment_pipe_v2")
+def load_pipe():
+    path = os.path.join(ART_DIR, "final_sentiment_pipe_v2.pkl")
+    return joblib.load(path)
 
+pipe = load_pipe()
+
+# ---------- UI ----------
 st.title("Women Clothing - Sentiment Classifier")
 st.write("Type a customer review and see the sentiment prediction")
 
-user_input = st.text_area("Review text:")
+txt = st.text_area("Review text:")
 
-pipe = get_model()
-pipe = load_model(ART_DIR, "final_sentiment_pipe_v2")  
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("Predict"):
+        if not txt.strip():
+            st.warning("Please enter some text first.")
+        else:
+            try:
+                pred = pipe.predict([txt])[0]   # expects -1/0/1 based on your training
+                label_map = {1: "Positive", 0: "Neutral", -1: "Negative"}
+                label = label_map.get(int(pred), str(pred))
+                st.success(f"Prediction: **{label}**")
+            except Exception as e:
+                st.error("Prediction failed.")
+                st.exception(e)
+with col2:
+    if st.button("Show probabilities"):
+        try:
+            proba = getattr(pipe, "predict_proba", None)
+            if proba is None:
+                st.info("This model doesn't expose predict_proba.")
+            else:
+                p = proba([txt])[0]
+                st.write({"neg(-1)": float(p[0]), "neu(0)": float(p[1]), "pos(1)": float(p[2])})
+        except Exception as e:
+            st.error("Could not compute probabilities.")
+            st.exception(e)
 
-import sklearn, numpy as np, scipy
+# ---------- Diagnostics (keep for sanity while deploying) ----------
+import sklearn, numpy as np, scipy, pathlib, hashlib
 st.write({
     "sklearn_version": sklearn.__version__,
-    "numpy_version": np.__version__,
-    "scipy_version": scipy.__version__,
+    "numpy_version":   np.__version__,
+    "scipy_version":   scipy.__version__,
 })
 
 tfidf = pipe.named_steps.get("tfidf")
@@ -41,38 +66,10 @@ st.write("Has tfidf step:", tfidf is not None)
 st.write("use_idf:", getattr(tfidf, "use_idf", None))
 st.write("Has vocabulary_:", hasattr(tfidf, "vocabulary_"))
 st.write("Has idf_:", hasattr(tfidf, "idf_"))
-st.write("Artifact Path", os.path.join(ART_DIR, "final_sentiment_pipe_v2.pkl"))
-import hashlib, pathlib
-p = pathlib.Path(ART_DIR) / "final_sentiment_pipe_v2.pkl"
+
+artifact_path = os.path.join(ART_DIR, "final_sentiment_pipe_v2.pkl")
+st.write("Artifact Path", artifact_path)
+p = pathlib.Path(artifact_path)
 if p.exists():
     st.write("Artifact size (bytes):", p.stat().st_size)
-    st.write("Artifact sha256 (first 16):",
-             hashlib.sha256(p.read_bytes()).hexdigest()[:16])
-    
-
-
-
-
-
-if st.button("Predict", type="primary"):
-    txt = (user_input or "").strip()
-    if not txt:
-        st.warning("Please type a review")
-    else:
-        try:
-            y = pipe.predict([txt])[0]              # <-- list[str]
-            st.write("raw prediction:", y)          # always show something
-
-            label_map = {1: "Positive", 0: "Neutral", -1: "Negative"}
-            label = label_map.get(int(y), str(y))
-
-            # show a friendly message
-            if label == "Positive":
-                st.success("Positive Review")
-            elif label == "Neutral":
-                st.info("Neutral Review")
-            else:
-                st.error("Negative Review")
-        except Exception as e:
-            st.error("Prediction failed:")
-            st.exception(e)  # <-- surfaces any hidden errors
+    st.write("Artifact sha256 (first 16):", hashlib.sha256(p.read_bytes()).hexdigest()[:16])
