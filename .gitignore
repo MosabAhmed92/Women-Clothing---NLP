@@ -7,13 +7,6 @@ reports/
 figs/
 
 # Models & artifacts
-# Models & artifacts
-# Ignore large temporary or experimental files, but keep final models
-artifacts/
-!artifacts/final_sentiment_pipe.pkl
-!artifacts/final_sentiment_pipe_v2.pkl
-!artifacts/final_sentiment_pipe.joblib
-*.h5
 
 # Python cache
 __pycache__/

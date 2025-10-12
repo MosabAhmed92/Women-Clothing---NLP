@@ -41,5 +41,3 @@ def run_gridsearch(X_train, y_train, random_state = 42):
     print("Best Parameters :", gs.best_params_)
 
     return gs.best_estimator_    
-
-

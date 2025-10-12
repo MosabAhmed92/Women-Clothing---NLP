@@ -19,7 +19,7 @@ from src.models.persist import load_model
 
 @st.cache_resource
 def get_model():
-    return load_model(ART_DIR, "final_sentiment_pipe")
+    return load_model(ART_DIR, "final_sentiment_pipe_v2")
 
 st.title("Women Clothing - Sentiment Classifier")
 st.write("Type a customer review and see the sentiment prediction")
