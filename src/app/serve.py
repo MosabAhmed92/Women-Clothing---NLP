@@ -1,5 +1,7 @@
 import streamlit as st
 import joblib
+import sklearn
+import numpy
 from pathlib import Path
 
 # -----------------------------
@@ -25,6 +27,12 @@ def load_pipeline():
     except Exception as e:
         st.error(f"Error loading model: {e}")
         st.stop()
+
+# --- New Diagnostic Code for Library Versions ---
+st.write(f"Joblib version: {joblib.__version__}")
+st.write(f"Scikit-learn version: {sklearn.__version__}")
+st.write(f"Numpy version: {numpy.__version__}")
+# --- End New Diagnostic Code ---
 
 pipe = load_pipeline()
 
