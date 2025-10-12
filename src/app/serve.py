@@ -1,35 +1,21 @@
 import sys
 import os
-import site
 import streamlit as st  # <-- streamlit import is fine anywhere
 
 # ---------- add repo root and src/ to sys.path BEFORE importing from src.* ----------
 FILE_DIR  = os.path.dirname(os.path.abspath(__file__))          # .../src/app
 PROJ_ROOT = os.path.abspath(os.path.join(FILE_DIR, "..", "..")) # repo root
-SRC_DIR   = os.path.join(PROJ_ROOT, "src")
 
-site.addsitedir(PROJ_ROOT)
+if FILE_DIR in sys.path:
+    sys.path.remove(FILE_DIR)
 
-print(f"DEBUG: Final sys.path: {sys.path}")
-try:
-    print(f"DEBUG: Contents of PROJ_ROOT ({PROJ_ROOT}): {os.listdir(PROJ_ROOT)}")
-except Exception as e:
-    print(f"DEBUG: Error listing PROJ_ROOT: {e}")
-try:
-    print(f"DEBUG: Contents of SRC_DIR ({SRC_DIR}): {os.listdir(SRC_DIR)}")
-except Exception as e:
-    print(f"DEBUG: Error listing SRC_DIR: {e}")
+if PROJ_ROOT not in sys.path:
+    sys.path.insert(0, PROJ_ROOT)
 
 ART_DIR = os.path.join(PROJ_ROOT, "artifacts")
 # ------------------------------------------------------------------------------------
 
-try:
-    from src.models.persist import load_model
-except ModuleNotFoundError as e:
-    print(f"DEBUG: ModuleNotFoundError caught: {e}")
-    print(f"DEBUG: Current working directory: {os.getcwd()}")
-    print(f"DEBUG: sys.path at error: {sys.path}")
-    raise e # Re-raise the exception after printing debug info
+from src.models.persist import load_model
 
 @st.cache_resource
 def get_model():
@@ -41,6 +27,26 @@ st.write("Type a customer review and see the sentiment prediction")
 user_input = st.text_area("Review text:")
 
 model = get_model()
+try:
+    import os, hashlib
+    st.write("Loaded project Type:", type(model))
+    if hasattr(model, 'named_steps'):
+        tfidf = model.named_steps.get('tfidf', None)
+        st.write("Has tfidf step:", tfidf is not None)
+        if tfidf is not None:
+            st.write("Has Vocabulary_:", hasattr(tfidf, "Vocabulary_"))
+            st.write("Has idf_:", hasattr(tfidf, 'idf_'))
+    import glob
+    path = os.path.join(ART_DIR, "final_sentiment_pipe.pkl")
+    st.write("Artifcat Path", path)
+    if os.path.exists(path):
+        st.write("Artificat size (bytes):", os.path.getsize(path))
+        with open (path, 'rb') as f:
+            sha = hashlib.sha256(f.read()).hexdigest()[:16]
+        st.write("Artifact sha256 (first 16): ", sha)
+except Exception as e:
+    st.write("Debug Failed: ", e)
+    
 
 if st.button("Predict"):
     if user_input.strip():
