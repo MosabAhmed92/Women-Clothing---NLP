@@ -1,22 +1,11 @@
 import streamlit as st
 import joblib
-import os # Import the os module
 from pathlib import Path
 
 # -----------------------------
 # Load fitted pipeline once
 # -----------------------------
 MODEL_PATH = Path(__file__).resolve().parents[2] / "artifacts" / "sentiment_pipe.joblib"
-
-# Diagnostic checks for MODEL_PATH
-if not MODEL_PATH.exists():
-    st.error(f"Error: Model file not found at {MODEL_PATH}")
-    st.stop() # Stop the app if the model is not found
-elif not MODEL_PATH.is_file():
-    st.error(f"Error: MODEL_PATH is not a file: {MODEL_PATH}")
-    st.stop()
-else:
-    st.success(f"Model file found at: {MODEL_PATH}") # Confirm path is correct and file exists
 
 
 @st.cache_resource
