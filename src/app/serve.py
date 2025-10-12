@@ -1,75 +1,38 @@
-import os, sys
 import streamlit as st
-
-# ---------- Resolve project paths ----------
-FILE_DIR  = os.path.dirname(os.path.abspath(__file__))          # .../src/app
-PROJ_ROOT = os.path.abspath(os.path.join(FILE_DIR, "..", "..")) # repo root
-ART_DIR   = os.path.join(PROJ_ROOT, "artifacts")
-
-# Make repo importable (safe to add even if already present)
-if PROJ_ROOT not in sys.path:
-    sys.path.insert(0, PROJ_ROOT)
-
-# ---------- Load model (cached) ----------
 import joblib
+from pathlib import Path
+
+# -----------------------------
+# Load fitted pipeline once
+# -----------------------------
+MODEL_PATH = Path(__file__).resolve().parents[2] / "artifacts" / "sentiment_pipe.joblib"
+
 
 @st.cache_resource
-def load_pipe():
-    path = os.path.join(ART_DIR, "final_sentiment_pipe_v2.pkl")
-    return joblib.load(path)
+def load_pipeline():
+    return joblib.load(MODEL_PATH)   # adjust path if needed
 
-pipe = load_pipe()
+pipe = load_pipeline()
 
-# ---------- UI ----------
-st.title("Women Clothing - Sentiment Classifier")
-st.write("Type a customer review and see the sentiment prediction")
+# -----------------------------
+# Streamlit UI
+# -----------------------------
+st.title("🧵 Sentiment Prediction App")
+st.write("Enter any product review or sentence to analyze its sentiment.")
 
-txt = st.text_area("Review text:")
+user_text = st.text_area("Input text:", height=150)
 
-col1, col2 = st.columns(2)
-with col1:
-    if st.button("Predict"):
-        if not txt.strip():
-            st.warning("Please enter some text first.")
+if st.button("Predict"):
+    if user_text.strip():
+        pred = pipe.predict([user_text])[0]
+
+        st.subheader("Result:")
+        if pred == 1:
+            st.success("✅ Positive Sentiment")
+        elif pred == 0:
+            st.info("😐 Neutral Sentiment")
         else:
-            try:
-                pred = pipe.predict([txt])[0]   # expects -1/0/1 based on your training
-                label_map = {1: "Positive", 0: "Neutral", -1: "Negative"}
-                label = label_map.get(int(pred), str(pred))
-                st.success(f"Prediction: **{label}**")
-            except Exception as e:
-                st.error("Prediction failed.")
-                st.exception(e)
-with col2:
-    if st.button("Show probabilities"):
-        try:
-            proba = getattr(pipe, "predict_proba", None)
-            if proba is None:
-                st.info("This model doesn't expose predict_proba.")
-            else:
-                p = proba([txt])[0]
-                st.write({"neg(-1)": float(p[0]), "neu(0)": float(p[1]), "pos(1)": float(p[2])})
-        except Exception as e:
-            st.error("Could not compute probabilities.")
-            st.exception(e)
+            st.error("❌ Negative Sentiment")
 
-# ---------- Diagnostics (keep for sanity while deploying) ----------
-import sklearn, numpy as np, scipy, pathlib, hashlib
-st.write({
-    "sklearn_version": sklearn.__version__,
-    "numpy_version":   np.__version__,
-    "scipy_version":   scipy.__version__,
-})
-
-tfidf = pipe.named_steps.get("tfidf")
-st.write("Has tfidf step:", tfidf is not None)
-st.write("use_idf:", getattr(tfidf, "use_idf", None))
-st.write("Has vocabulary_:", hasattr(tfidf, "vocabulary_"))
-st.write("Has idf_:", hasattr(tfidf, "idf_"))
-
-artifact_path = os.path.join(ART_DIR, "final_sentiment_pipe_v2.pkl")
-st.write("Artifact Path", artifact_path)
-p = pathlib.Path(artifact_path)
-if p.exists():
-    st.write("Artifact size (bytes):", p.stat().st_size)
-    st.write("Artifact sha256 (first 16):", hashlib.sha256(p.read_bytes()).hexdigest()[:16])
+    else:
+        st.warning("Please enter some text first.")

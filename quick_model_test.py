@@ -1,14 +1,20 @@
-import os, sys, joblib
+# quick_model_test.py
+import joblib, sys
+PIPE_PATH = "artifacts/sentiment_pipe.joblib"
 
-PROJ_ROOT = os.path.abspath('.')
-ART_DIR = os.path.join(PROJ_ROOT, 'artifacts')
-pipe_path = os.path.join(ART_DIR, 'final_sentiment_pipe.pkl')
+try:
+    pipe = joblib.load(PIPE_PATH)
+except Exception as e:
+    print(f"[FAIL] Could not load pipeline at {PIPE_PATH}: {e}")
+    sys.exit(1)
 
-pipe = joblib.load(pipe_path)
+if not hasattr(pipe.named_steps["tfidf"], "idf_"):
+    print("[FAIL] Vectorizer inside pipeline is NOT fitted (missing idf_).")
+    sys.exit(2)
 
-print('Loaded : ', type(pipe))
-
-sample = ["Love the fit and the fabric, would buy again"]
-print('the sample is : ', sample[0])
-print('sentiment prediction is : ', pipe.predict(sample)[0])
-print("model Loaded and prediction made on a sample")
+try:
+    y = pipe.predict(["This fabric is soft but sizing is off."])[0]
+    print(f"[PASS] Predict works. Example label: {y}")
+except Exception as e:
+    print(f"[FAIL] Predict raised: {type(e).__name__}: {e}")
+    sys.exit(3)
