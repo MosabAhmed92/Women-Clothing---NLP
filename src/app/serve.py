@@ -29,6 +29,13 @@ user_input = st.text_area("Review text:")
 pipe = get_model()
 pipe = load_model(ART_DIR, "final_sentiment_pipe")  
 
+import sklearn, numpy as np, scipy
+st.write({
+    "sklearn_version": sklearn.__version__,
+    "numpy_version": np.__version__,
+    "scipy_version": scipy.__version__,
+})
+
 tfidf = pipe.named_steps.get("tfidf")
 st.write("Has tfidf step:", tfidf is not None)
 st.write("use_idf:", getattr(tfidf, "use_idf", None))
