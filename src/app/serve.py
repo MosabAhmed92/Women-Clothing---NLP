@@ -27,7 +27,7 @@ st.write("Type a customer review and see the sentiment prediction")
 user_input = st.text_area("Review text:")
 
 pipe = get_model()
-pipe = load_model(ART_DIR, "final_sentiment_pipe")  
+pipe = load_model(ART_DIR, "final_sentiment_pipe_v2")  
 
 import sklearn, numpy as np, scipy
 st.write({
