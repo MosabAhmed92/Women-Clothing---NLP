@@ -26,18 +26,26 @@ st.write("Type a customer review and see the sentiment prediction")
 
 user_input = st.text_area("Review text:")
 
-model = get_model()
-tfidf = model.named_steps.get("tfidf", None)  # preferred
+pipe = get_model()
+pipe = load_model(ART_DIR, "final_sentiment_pipe")  
 
-has_vocab = bool(tfidf is not None and hasattr(tfidf, "vocabulary_") and tfidf.vocabulary_)
-has_idf   = bool(tfidf is not None and hasattr(tfidf, "idf_")        and tfidf.idf_ is not None)
-
+tfidf = pipe.named_steps.get("tfidf")
 st.write("Has tfidf step:", tfidf is not None)
-st.write("Has vocabulary_:", has_vocab)
-st.write("Has idf_:", has_idf)
+st.write("use_idf:", getattr(tfidf, "use_idf", None))
+st.write("Has vocabulary_:", hasattr(tfidf, "vocabulary_"))
+st.write("Has idf_:", hasattr(tfidf, "idf_"))
+st.write("Artifact Path", os.path.join(ART_DIR, "final_sentiment_pipe.pkl"))
+import hashlib, pathlib
+p = pathlib.Path(ART_DIR) / "final_sentiment_pipe.pkl"
+if p.exists():
+    st.write("Artifact size (bytes):", p.stat().st_size)
+    st.write("Artifact sha256 (first 16):",
+             hashlib.sha256(p.read_bytes()).hexdigest()[:16])
     
 
-pipe = get_model()  # your cached pipeline
+
+
+
 
 if st.button("Predict", type="primary"):
     txt = (user_input or "").strip()
