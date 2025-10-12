@@ -41,9 +41,9 @@ st.write("Has tfidf step:", tfidf is not None)
 st.write("use_idf:", getattr(tfidf, "use_idf", None))
 st.write("Has vocabulary_:", hasattr(tfidf, "vocabulary_"))
 st.write("Has idf_:", hasattr(tfidf, "idf_"))
-st.write("Artifact Path", os.path.join(ART_DIR, "final_sentiment_pipe.pkl"))
+st.write("Artifact Path", os.path.join(ART_DIR, "final_sentiment_pipe_v2.pkl"))
 import hashlib, pathlib
-p = pathlib.Path(ART_DIR) / "final_sentiment_pipe.pkl"
+p = pathlib.Path(ART_DIR) / "final_sentiment_pipe_v2.pkl"
 if p.exists():
     st.write("Artifact size (bytes):", p.stat().st_size)
     st.write("Artifact sha256 (first 16):",
