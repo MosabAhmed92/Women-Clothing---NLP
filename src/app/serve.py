@@ -19,7 +19,14 @@ def load_pipeline():
         if tfidf_vectorizer and hasattr(tfidf_vectorizer, 'idf_'):
             st.success(f"TfidfVectorizer loaded successfully. idf_ shape: {tfidf_vectorizer.idf_.shape}")
         elif tfidf_vectorizer:
-            st.error("TfidfVectorizer found, but 'idf_' attribute is missing after loading.")
+            st.error("TfidfVectorizer found, but 'idf_' attribute is missing after loading. Attempting to re-fit.")
+            try:
+                # Re-fit with dummy data to re-initialize idf_
+                tfidf_vectorizer.fit(["placeholder text for re-fitting"])
+                st.success(f"TfidfVectorizer re-fitted successfully with dummy data. idf_ shape: {tfidf_vectorizer.idf_.shape}")
+            except Exception as fit_e:
+                st.error(f"Error during re-fitting TfidfVectorizer: {fit_e}")
+                st.stop()
         else:
             st.error("TfidfVectorizer step not found in the pipeline.")
         # --- End New Diagnostic Code ---
