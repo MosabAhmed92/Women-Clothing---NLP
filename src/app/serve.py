@@ -11,7 +11,17 @@ MODEL_PATH = Path(__file__).resolve().parents[2] / "artifacts" / "sentiment_pipe
 @st.cache_resource
 def load_pipeline():
     try:
-        return joblib.load(MODEL_PATH)   # adjust path if needed
+        loaded_pipe = joblib.load(MODEL_PATH)
+        # --- New Diagnostic Code ---
+        tfidf_vectorizer = loaded_pipe.named_steps.get('tfidf')
+        if tfidf_vectorizer and hasattr(tfidf_vectorizer, 'idf_'):
+            st.success(f"TfidfVectorizer loaded successfully. idf_ shape: {tfidf_vectorizer.idf_.shape}")
+        elif tfidf_vectorizer:
+            st.error("TfidfVectorizer found, but 'idf_' attribute is missing after loading.")
+        else:
+            st.error("TfidfVectorizer step not found in the pipeline.")
+        # --- End New Diagnostic Code ---
+        return loaded_pipe
     except Exception as e:
         st.error(f"Error loading model: {e}")
         st.stop()
