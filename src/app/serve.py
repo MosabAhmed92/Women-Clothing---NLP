@@ -37,14 +37,27 @@ st.write("Has vocabulary_:", has_vocab)
 st.write("Has idf_:", has_idf)
     
 
-if st.button("Predict"):
-    if user_input.strip():
-        pred = model.predict([user_input])[0]
-        if pred == 1:
-            st.success("Positive Review")
-        elif pred == 0:
-            st.info("Neutral Review")
-        else:
-            st.error("Negative Review")
+pipe = get_model()  # your cached pipeline
+
+if st.button("Predict", type="primary"):
+    txt = (user_input or "").strip()
+    if not txt:
+        st.warning("Please type a review")
     else:
-        st.warning("Please enter some text first")
+        try:
+            y = pipe.predict([txt])[0]              # <-- list[str]
+            st.write("raw prediction:", y)          # always show something
+
+            label_map = {1: "Positive", 0: "Neutral", -1: "Negative"}
+            label = label_map.get(int(y), str(y))
+
+            # show a friendly message
+            if label == "Positive":
+                st.success("Positive Review")
+            elif label == "Neutral":
+                st.info("Neutral Review")
+            else:
+                st.error("Negative Review")
+        except Exception as e:
+            st.error("Prediction failed:")
+            st.exception(e)  # <-- surfaces any hidden errors
