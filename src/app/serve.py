@@ -27,25 +27,14 @@ st.write("Type a customer review and see the sentiment prediction")
 user_input = st.text_area("Review text:")
 
 model = get_model()
-try:
-    import os, hashlib
-    st.write("Loaded project Type:", type(model))
-    if hasattr(model, 'named_steps'):
-        tfidf = model.named_steps.get('tfidf', None)
-        st.write("Has tfidf step:", tfidf is not None)
-        if tfidf is not None:
-            st.write("Has Vocabulary_:", hasattr(tfidf, "Vocabulary_"))
-            st.write("Has idf_:", hasattr(tfidf, 'idf_'))
-    import glob
-    path = os.path.join(ART_DIR, "final_sentiment_pipe.pkl")
-    st.write("Artifcat Path", path)
-    if os.path.exists(path):
-        st.write("Artificat size (bytes):", os.path.getsize(path))
-        with open (path, 'rb') as f:
-            sha = hashlib.sha256(f.read()).hexdigest()[:16]
-        st.write("Artifact sha256 (first 16): ", sha)
-except Exception as e:
-    st.write("Debug Failed: ", e)
+tfidf = model.named_steps.get("tfidf", None)  # preferred
+
+has_vocab = bool(tfidf is not None and hasattr(tfidf, "vocabulary_") and tfidf.vocabulary_)
+has_idf   = bool(tfidf is not None and hasattr(tfidf, "idf_")        and tfidf.idf_ is not None)
+
+st.write("Has tfidf step:", tfidf is not None)
+st.write("Has vocabulary_:", has_vocab)
+st.write("Has idf_:", has_idf)
     
 
 if st.button("Predict"):
