@@ -12,29 +12,26 @@ MODEL_PATH = Path(__file__).resolve().parents[2] / "artifacts" / "sentiment_pipe
 
 @st.cache_resource
 def load_pipeline():
-    try:
-        loaded_pipe = joblib.load(MODEL_PATH)
-        # --- New Diagnostic Code ---
-        tfidf_vectorizer = loaded_pipe.named_steps.get('tfidf')
-        if tfidf_vectorizer and hasattr(tfidf_vectorizer, 'idf_'):
-            st.success(f"TfidfVectorizer loaded successfully. idf_ shape: {tfidf_vectorizer.idf_.shape}")
-        elif tfidf_vectorizer:
-            st.error("TfidfVectorizer found, but 'idf_' attribute is missing after loading.")
-        else:
-            st.error("TfidfVectorizer step not found in the pipeline.")
-        # --- End New Diagnostic Code ---
-        return loaded_pipe
-    except Exception as e:
-        st.error(f"Error loading model: {e}")
-        st.stop()
+        pipe = joblib.load(MODEL_PATH)
+        vectorizer = pipe.named_steps['tfidf']
 
-# --- New Diagnostic Code for Library Versions ---
-st.write(f"Joblib version: {joblib.__version__}")
-st.write(f"Scikit-learn version: {sklearn.__version__}")
-st.write(f"Numpy version: {numpy.__version__}")
-# --- End New Diagnostic Code ---
+        if hasattr(vectorizer, 'idf_'):
+            st.success(f"✅ TfidfVectorizer loaded successfully. idf_ shape: {vectorizer.idf_.shape}")
+        else:
+            st.error("❌ TfidfVectorizer found, but 'idf_' attribute is missing after loading.")
+
+            try:
+                vectorizer_path = Path(__file__).resolve().parents[2] / "artifacts" / "tfidf_vectorizer.joblib"
+                backup_vectorizer = joblib.load(vectorizer_path)
+                pipe.named_steps['tfidf'] = backup_vectorizer
+                st.success("✅ Backup vectorizer loaded successfully!")
+            except Exception as e:
+                st.error(f"❌ Failed to load backup vectorizer: {e}")
+
+        return pipe
 
 pipe = load_pipeline()
+
 
 # -----------------------------
 # Streamlit UI
