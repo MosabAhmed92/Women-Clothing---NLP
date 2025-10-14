@@ -1,5 +1,10 @@
 # Women Clothing E-commerce Reviews Sentiment Analysis
 
+
+## 🌐 App Preview
+
+![Streamlit Sentiment App Screenshot](assets/app_screenshot.png)
+
 ## Project Description
 This project focuses on sentiment analysis of women's clothing e-commerce reviews. It aims to classify reviews as positive, neutral or negative, providing insights into customer satisfaction and product performance. The solution includes data preprocessing, model training, and a deployment strategy using Streamlit.
 
