@@ -62,7 +62,7 @@ This project focuses on sentiment analysis of women's clothing e-commerce review
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/MosabAhmed92/Women-Clothing-Sentiment-Analysis.git
+    git clone https://github.com/MosabAhmed92/Women-Clothing-Sentiment-Analysis.git](https://github.com/MosabAhmed92/Women-Clothing---NLP.git
     cd Women-Clothing-Sentiment-Analysis
     ```
 
@@ -117,8 +117,6 @@ The Streamlit application is deployed on Streamlit Cloud. You can access the liv
 - Experiment with more advanced NLP models (e.g., BERT, transformers).
 - Implement continuous integration/continuous deployment (CI/CD) pipeline.
 - Add more detailed model evaluation metrics and visualizations.
-- Expand to multi-class sentiment analysis (e.g., neutral sentiment).
-- Integrate with a database for storing reviews and predictions.
 
 ## Contact & Author
 
