@@ -7,8 +7,8 @@ from pathlib import Path
 # -----------------------------
 # Load fitted pipeline once
 # -----------------------------
-MODEL_PATH = Path(__file__).resolve().parents[2] / "artifacts" / "sentiment_pipe.joblib"
 
+MODEL_PATH = Path(__file__).resolve().parents[2] / "artifacts" / "sentiment_pipe.joblib"
 
 @st.cache_resource
 def load_pipeline():
@@ -39,6 +39,7 @@ pipe = load_pipeline()
 # -----------------------------
 # Streamlit UI
 # -----------------------------
+
 st.title("🧵 Sentiment Prediction App")
 st.write("Enter any product review or sentence to analyze its sentiment.")
 
